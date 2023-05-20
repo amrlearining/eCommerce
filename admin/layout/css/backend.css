@@ -1,0 +1,118 @@
+/* Start Main Rules */
+
+body {
+    background-color: #F4F4F4;
+    font-size: 16px;
+}
+
+.asterisk {
+    font-size: 30px;
+    position: absolute;
+    right: 30px;
+    top: 8px;
+    color: red;
+}
+/* End Main Rules */
+
+/* Start Login Form */
+
+.login {
+    width: 300px;
+    margin: 100px auto;
+}
+
+.login h4{
+    color: #888;
+}
+
+.login input {
+    margin-bottom: 10px;
+}
+
+.login .form-control {
+    background-color: #EAEAEA;
+}
+
+.login .btn {
+    background-color: #008dde;
+}
+
+/*start navbar*/
+
+.navbar {
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.navbar-inverse .navbar-nav >.open >a,
+.navbar-inverse .navbar-nav >.open >a:focus, 
+.navbar-inverse .navbar-nav>.open>a:hover, 
+.dropdown-menu{
+    color: black;
+    font-weight: bold;
+    background-color: #52918f;
+}
+
+.navbar-nav>li>.dropdown-menu{
+    margin-top: 3px;
+}
+
+.dropdown-menu{
+    padding: 0 0;
+}
+.navbar-nav>li>a {
+    font-size: 1em;
+}
+.dropdown-menu>li>a {
+    padding: 3px 14px;
+}
+
+.navbar-brand{
+    font-size: 1em;
+}
+
+.container {
+    width: 80%;
+}
+
+.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover {
+    color: black;
+    background-color: #7dc4c1;
+}
+
+.form-control {
+    position: relative;
+}
+/* members start */
+
+h1 {
+    font-size: 55px;
+    margin: 40px 0;
+    font-weight: bold;
+    color: #666;
+}
+
+.show-pass {
+    position: absolute;
+    top: 7px;
+    right: -32px;
+}
+.main-table{
+    -webkit-box-shadow: 0 3px 10px #CCC;
+    -moz-box-shadow: 0 3px 10px #CCC;
+    box-shadow: 0 3px 10px #CCC;
+}
+.main-table td {
+    background-color: #FFF;
+    vertical-align: middle !important;
+}
+.main-table tr:first-child td { /* you can use thead*/
+    background-color: #333;
+    color: #FFF;
+}
+
+.main-table .btn {
+    padding: 3px 10px;
+}
+/* members end */
