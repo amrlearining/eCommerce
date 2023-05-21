@@ -35,7 +35,7 @@ if (isset($_SESSION['Username'])) {
                             echo '<td>' . $row['Username'] . '</td>';
                             echo '<td>' . $row['Email'] . '</td>';
                             echo '<td>' . $row['FullName'] . '</td>';
-                            echo '<td>' .  '</td>';
+                            echo '<td>' . $row['Date'] . '</td>';
                             echo '<td> <a href="members.php?do=edit&userid=' . $row['UserID'] . '" class="btn btn-success"><i class="fa fa-edit"></i>Edit</a>
                             <a href="members.php?do=delete&userid=' . $row['UserID'] . '" class="btn btn-danger confirm"><i class="fa fa-close"></i>Delete</a> </td>';
                         echo '</tr>';
@@ -131,18 +131,19 @@ if (isset($_SESSION['Username'])) {
             }
 
             if (checkItem("Username", "users", $user) == 1) {
-                $formErrors[] = 'There are a user with same username';
+                $formErrors[] = 'Sorry This user is <strong>exist <strong>';
             }
 
             foreach($formErrors as $error){
-                echo '<div class="alert alert-danger">' . $error . '</div>';
+                $theMsg = '<div class="alert alert-danger">' . $error . '</div>';
+                redirectHome($theMsg, 'back', 5);
             }
 
             if (empty($formErrors)) {
                 
                 $stmt = $con->prepare("INSERT INTO 
-                                        users(Username, Password, Email, FullName) 
-                                        VALUES(:un, :pw, :e, :fn)");
+                                        users(Username, Password, Email, FullName, RegStatus, Date) 
+                                        VALUES(:un, :pw, :e, :fn, 1, now())");
                 $stmt->execute(array(
                     ':un' => $user,
                     ':pw' => $hashpass,
@@ -177,7 +178,7 @@ if (isset($_SESSION['Username'])) {
         // the row count
         $count = $stmt->rowCount();
         
-        if($stmt->rowCount() > 0) { ?>
+        if($count > 0) { ?>
         
         <h1 class="text-center">Edit Member</h1>
         <div class="container">
@@ -231,46 +232,46 @@ if (isset($_SESSION['Username'])) {
 
                 redirectHome($theMsg, 'back', 4);
             }
-        } elseif ($do == 'Update') {
+    } elseif ($do == 'Update') {
+        
+        echo "<h1 class='text-center'>Update Member</h1>";
+        echo "<div class='container'>";
+        
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
-            echo "<h1 class='text-center'>Update Member</h1>";
-            echo "<div class='container'>";
+            $id = $_POST['userid'];
+            $user = $_POST['username'];
+            $email = $_POST['email'];
+            $name = $_POST['Full-name'];
             
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                
-                $id = $_POST['userid'];
-                $user = $_POST['username'];
-                $email = $_POST['email'];
-                $name = $_POST['Full-name'];
-                
-                $pass = empty($_POST['newPassword']) ? $_POST['oldPassword'] : sha1($_POST['newPassword']);  
-                
-                $formErrors = array();
-                if (empty($user)){
-                    $formErrors[] = 'Username cant be <strong> empty </strong>';
-            }
-            if (empty($email)){
-                $formErrors[] = 'Email cant be <strong> empty </strong>';
-            }
-            if (empty($name)){
-                $formErrors[] = 'Full Name cant be <strong> empty </strong>';
-            }
-            if (strlen($_POST['newPassword']) < 6 && strlen($_POST['newPassword']) > 0){
-                $formErrors[] = ' Password cant be less than <strong> 6 charachters </strong> ';
-            }
+            $pass = empty($_POST['newPassword']) ? $_POST['oldPassword'] : sha1($_POST['newPassword']);  
             
-            foreach($formErrors as $error){
-                echo '<div class="alert alert-danger">' . $error . '</div>';
-            }
+            $formErrors = array();
+            if (empty($user)){
+                $formErrors[] = 'Username cant be <strong> empty </strong>';
+        }
+        if (empty($email)){
+            $formErrors[] = 'Email cant be <strong> empty </strong>';
+        }
+        if (empty($name)){
+            $formErrors[] = 'Full Name cant be <strong> empty </strong>';
+        }
+        if (strlen($_POST['newPassword']) < 6 && strlen($_POST['newPassword']) > 0){
+            $formErrors[] = ' Password cant be less than <strong> 6 charachters </strong> ';
+        }
+        
+        foreach($formErrors as $error){
+            echo '<div class="alert alert-danger">' . $error . '</div>';
+        }
+        
+        if (empty($formErrors)) {
             
-            if (empty($formErrors)) {
-                
-                $stmt = $con->prepare("Update users SET Username = ?, Email = ?, FullName = ?, Password = ? WHERE UserID = ?");
-                $stmt->execute(array($user, $email, $name, $pass, $id));    
-                $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' Record Update </div>';
-                redirectHome($theMsg, 'back', 6);
-            }
-            
+            $stmt = $con->prepare("Update users SET Username = ?, Email = ?, FullName = ?, Password = ? WHERE UserID = ?");
+            $stmt->execute(array($user, $email, $name, $pass, $id));    
+            $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' Record Update </div>';
+            redirectHome($theMsg, 'back', 6);
+        }
+        
         } else {
             $theMsg = '<div class="alert alert-danger">Sorry you cant Browse This Page Directly</div>';
 
@@ -284,27 +285,26 @@ if (isset($_SESSION['Username'])) {
         $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
         
         //select all data depend on this id
-        $stmt = $con->prepare("SELECT * FROM users WHERE UserID = ? LIMIT 1");
-        
-            //execute quiry
-            $stmt->execute(array($userid));
+
+        $check = checkItem('UserID', 'users', $userid);     
             
-            // the row count
-            $count = $stmt->rowCount();
-            
-            if($stmt->rowCount() > 0) {
+            if($check > 0) {
                 $stmt = $con->prepare("DELETE FROM users WHERE UserID = :zuser");
                 $stmt->bindParam(":zuser", $userid);
                 $stmt->execute();
-                echo '<div class="alert alert-success">' . $stmt->rowCount() . ' One record Inserted </div>';
+                $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' One record Inserted </div>';
+                redirectHome($theMsg, 'back', 5);
+            } else {
+                $theMsg = '<div class="alert alert-danger"> No user with same ID </div>';
+                redirectHome($theMsg);
             }
             echo "</div>";
             
-        } else {
-            $errorMsg = '<div class="alert alert-danger">erorr page</div>';
+    } else {
+        $errorMsg = '<div class="alert alert-danger">erorr page</div>';
 
-            redirectHome($errorMsg);
-        }
+        redirectHome($errorMsg);
+    }
         
         include $tpl . 'footer.php';
         

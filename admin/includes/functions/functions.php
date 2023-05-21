@@ -46,3 +46,15 @@
 
         return $count;
     }
+
+    // count Items v2.0
+    function countItem($item, $table, $filter = ";") {
+        global $con;
+        if ($filter != ";") {
+            $filter = "WHERE $item = $filter";
+        }
+
+        $stmt = $con->prepare("SELECT COUNT($item) FROM $table $filter");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }

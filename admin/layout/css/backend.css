@@ -84,6 +84,49 @@ body {
 .form-control {
     position: relative;
 }
+/*dashboard start */
+.home-stats .stat {
+    background-color: #EEE;
+    padding: 20px;
+    font-size: 15px;
+    color: #FFF;
+    border-radius: 10px;
+}
+
+.home-stats .stat a {
+    color: #FFF;
+}
+
+.home-stats a:hover {
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.home-stats .stat span {
+    display: block;
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.latest {
+    margin-top: 30px;
+}
+
+.home-stats .st-mem {
+    background-color: #3498db;
+}
+
+.home-stats .st-pen {
+    background-color: #c0392b;
+}
+
+.home-stats .st-it {
+    background-color: #d35400;
+}
+
+.home-stats .st-com {
+    background-color: #8e44ad;
+}
 /* members start */
 
 h1 {
