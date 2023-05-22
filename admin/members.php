@@ -10,7 +10,13 @@ if (isset($_SESSION['Username'])) {
 
     if ($do == 'Manage') { // Manage page 
         
-        $stmt = $con->prepare("SELECT * FROM users WHERE GroupID != 1");
+        
+        $query = '';
+        if (isset($_GET['page']) && $_GET['page'] == 'pending') {
+            $query ='AND RegStatus = 0';
+        }
+
+        $stmt = $con->prepare("SELECT * FROM users WHERE GroupID != 1 $query");
         $stmt->execute();
         $rows = $stmt->fetchAll();
         ?>
@@ -37,7 +43,13 @@ if (isset($_SESSION['Username'])) {
                             echo '<td>' . $row['FullName'] . '</td>';
                             echo '<td>' . $row['Date'] . '</td>';
                             echo '<td> <a href="members.php?do=edit&userid=' . $row['UserID'] . '" class="btn btn-success"><i class="fa fa-edit"></i>Edit</a>
-                            <a href="members.php?do=delete&userid=' . $row['UserID'] . '" class="btn btn-danger confirm"><i class="fa fa-close"></i>Delete</a> </td>';
+                            <a href="members.php?do=delete&userid=' . $row['UserID'] . '" class="btn btn-danger confirm"><i class="fa fa-close"></i>Delete</a>'; 
+                            
+                            if ($row['RegStatus'] == 0) {
+                                echo '<a href="members.php?do=activate&userid=' . $row['UserID'] . '" class="btn btn-info activate"><i class="fa fa-close"></i>Activate</a>'; 
+                            }
+                            
+                            echo '</td>';
                         echo '</tr>';
                     } ?>
                 </table>
@@ -153,7 +165,7 @@ if (isset($_SESSION['Username'])) {
 
                 $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' One record Inserted </div>';
                 
-                redirectHome($theMsg, 'back', 6);
+                redirectHome($theMsg, 'back');
             }
         } else {
             $errorMsg = '<div class="alert alert-danger">Sorry you cant Browse This Page Directly</div>';
@@ -292,7 +304,7 @@ if (isset($_SESSION['Username'])) {
                 $stmt = $con->prepare("DELETE FROM users WHERE UserID = :zuser");
                 $stmt->bindParam(":zuser", $userid);
                 $stmt->execute();
-                $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' One record Inserted </div>';
+                $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' One record Deleted </div>';
                 redirectHome($theMsg, 'back', 5);
             } else {
                 $theMsg = '<div class="alert alert-danger"> No user with same ID </div>';
@@ -300,6 +312,28 @@ if (isset($_SESSION['Username'])) {
             }
             echo "</div>";
             
+    } elseif ($do == 'activate') {
+    
+        echo "<h1 class='text-center'>Activate Member</h1>";
+        echo "<div class='container'>";
+        $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
+        
+        //select all data depend on this id
+
+        $check = checkItem('UserID', 'users', $userid);     
+            
+            if($check > 0) {
+                $stmt = $con->prepare("UPDATE users SET RegStatus = 1 WHERE UserID = :zuser");
+                $stmt->bindParam(":zuser", $userid);
+                $stmt->execute();
+                $theMsg = '<div class="alert alert-success">' . $stmt->rowCount() . ' One record Activated </div>';
+                redirectHome($theMsg, 'back');
+            } else {
+                $theMsg = '<div class="alert alert-danger"> No user with same ID </div>';
+                redirectHome($theMsg);
+            }
+            echo "</div>";
+
     } else {
         $errorMsg = '<div class="alert alert-danger">erorr page</div>';
 

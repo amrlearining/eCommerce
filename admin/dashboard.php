@@ -4,7 +4,14 @@
 
     if (isset($_SESSION['Username'])) {
         
-        include 'init.php'; ?>
+        include 'init.php'; 
+        
+        
+        $limitNum = 5;
+        $late = getLatest('Username', 'users', 'UserID', $limitNum);
+        
+        
+        ?>
 
         <div class="container home-stats text-center">
             <h1>Dashboard</h1>
@@ -18,10 +25,12 @@
                     </a>
                 </div>
                 <div class="col-md-3">
+                    <a href="members.php?do=Manage&page=pending">
                     <div class="stat st-pen">
                         Pending Members
                         <span><?php echo countItem('RegStatus', 'users', 0) ?></span>
                     </div>
+                    </a>
                 </div>
                 <div class="col-md-3">
                     <div class="stat st-it">
@@ -43,10 +52,14 @@
                 <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-users"></i> Latest Registerd Users
+                            <i class="fa fa-users"></i> Latest <?php echo $limitNum ?> Registerd Users
                         </div>
                         <div class="panel-body">
-                            Test
+                            <?php 
+                                foreach ($late as $item) {
+                                    echo $item['Username'] . '<br>';
+                                }
+                            ?>
                         </div>
                     </div>
                 </div>

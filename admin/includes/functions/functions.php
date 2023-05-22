@@ -58,3 +58,13 @@
         $stmt->execute();
         return $stmt->fetchColumn();
     }
+
+    // get latests v1.0
+    function getLatest($select, $table, $order, $limit = 5) {
+        global $con;
+
+        $stmt = $con->prepare("SELECT $select FROM $table ORDER BY $order DESC LIMIT $limit");
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        return $row;
+    }
